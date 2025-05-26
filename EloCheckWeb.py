@@ -8,7 +8,6 @@ headers = {
     "Authorization": f"Bearer {API_KEY}"
 }
 
-
 def get_last_matches_result(nickname, game="cs2"):
     # Oyuncu ID'sini al
     player_url = f"https://open.faceit.com/data/v4/players?nickname={nickname}"
@@ -28,8 +27,8 @@ def get_last_matches_result(nickname, game="cs2"):
         return None
 
     matches = matches_resp.json().get("items", [])
-    wins = 0
-    total = 0
+
+    total = ""
 
     for match in matches:
         match_id = match.get("match_id")
@@ -48,15 +47,16 @@ def get_last_matches_result(nickname, game="cs2"):
                     if player["player_id"] == player_id:
                         result = player.get("player_stats", {}).get("Result")
                         if result == "1":
-                            wins += 1
-                        total += 1
+                            total = total + "L "
+                        else:
+                            total = total + "W "
                         raise StopIteration  # break all loops
         except StopIteration:
             continue
         except Exception:
             continue
 
-    return f"{wins}/{total}" if total > 0 else "Yok"
+    return total
 
 
 
